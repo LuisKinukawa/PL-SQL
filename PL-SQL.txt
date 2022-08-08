@@ -1,0 +1,82 @@
+/* Criação da tabela */
+CREATE TABLE cap10(
+  userno        NUMBER(4,0),
+  username      VARCHAR2(10),
+  userpassword  VARCHAR2(20),
+  quantlixo     NUMBER(5),
+  CONSTRAINT pk_emp_cap10 PRIMARY KEY (userno)
+);
+
+
+INSERT INTO cap10 VALUES
+        (0001, 'Luiss',  'Luis1', 10);
+
+INSERT INTO cap10 VALUES
+        (0002, 'Pedro',  'Pedro1', 11);
+
+INSERT INTO cap10 VALUES
+        (0003, 'Carlos',  'Carlos1', 04);      
+
+/* Verificar se nome usuário existe */
+DECLARE
+  n_count number;
+BEGIN
+    SELECT COUNT(1) INTO n_count 
+    FROM cap10
+    WHERE username = 'Luiss';
+
+  IF n_count > 0 THEN
+    dbms_output.put_line('Usuário cadastrado');
+  ELSE
+    dbms_output.put_line('Usuário não cadastrado');
+  END IF;
+END;
+
+/*Verificar se senha é forte*/
+DECLARE
+  n_count2 VARCHAR2(20);
+BEGIN
+    SELECT userpassword INTO n_count2 
+    FROM cap10
+    WHERE username = 'Luiss';
+
+  IF LENGTH(n_count2) >= 6 THEN
+    dbms_output.put_line('Senha forte');
+  ELSE
+    dbms_output.put_line('Senha fraca');
+  END IF;
+END;
+
+/*Atualizar quantidade de lixo doado com a quantidade anterior mais a nova*/
+BEGIN
+    UPDATE cap10
+    SET quantlixo = quantlixo + 12
+    WHERE userno = 0002;
+END;
+
+/*Alterar senha de usuário*/
+BEGIN
+    UPDATE cap10
+    SET userpassword = 'SenhaNova2'
+    WHERE userno = 0003;
+END;
+
+/*Cadastrar sem precisar colocar código*/
+DROP SEQUENCE sq_num_user;
+CREATE SEQUENCE sq_num_user START WITH 4;
+
+CREATE OR REPLACE TRIGGER tr_num_user_seq
+BEFORE INSERT ON cap10
+FOR EACH ROW
+DECLARE
+    v_cd_num_user cap10.userno%type;
+BEGIN
+    SELECT sq_num_user.nextval INTO v_cd_num_user FROM dual;
+    :NEW.userno := v_cd_num_user;
+END;
+
+INSERT INTO cap10
+    (username, userpassword, quantlixo)
+    VALUES ('Bill', 321, 20)
+
+SELECT * FROM cap10
